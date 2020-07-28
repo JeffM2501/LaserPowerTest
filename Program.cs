@@ -29,7 +29,7 @@ using System.Threading.Tasks;
 using System.IO;
 using System.Xml.Linq;
 
-namespace ConsoleApp2
+namespace LaserPowerTest
 {
     class Program
     {
@@ -107,20 +107,74 @@ namespace ConsoleApp2
 
             }
 
+            int outlinePower = (minPower + ((maxPower - minPower) / 2));
             // outer border
             sb.AppendLine("G0X-1Y-1");
-            sb.AppendLine("M4 S" + (minPower + ((maxPower - minPower) / 2)));
+            sb.AppendLine("M4 S" + outlinePower);
             sb.AppendLine("G1 X" + (maxX + 1) + "F100");
             sb.AppendLine("G1 Y" + (lineY + 1));
             sb.AppendLine("G1 X-1");
             sb.AppendLine("G1 Y-1");
             sb.AppendLine("M5");
 
-            // midpoint lines
+            int quaterX = maxX / 4;
+            int halfX = maxX / 2;
+            int threeQuarterX = halfX + quaterX;
 
-            // quarter line
 
-            // 3/4 line
+            // lower lines
+            sb.AppendLine("G0 X" + quaterX + "Y-1");
+            sb.AppendLine("M4 S" + outlinePower);
+            sb.AppendLine("G1 Y0");
+            sb.AppendLine("M5");
+
+            sb.AppendLine("G0 X" + halfX + "Y-1");
+            sb.AppendLine("M4 S" + outlinePower);
+            sb.AppendLine("G1 Y0");
+            sb.AppendLine("M5");
+
+            sb.AppendLine("G0 X" + threeQuarterX + "Y-1");
+            sb.AppendLine("M4 S" + outlinePower);
+            sb.AppendLine("G1 Y0");
+            sb.AppendLine("M5");
+
+            // upper lines
+            sb.AppendLine("G0 X" + quaterX + "Y" + (lineY + 1));
+            sb.AppendLine("M4 S" + outlinePower);
+            sb.AppendLine("G1 Y" + lineY);
+            sb.AppendLine("M5");
+
+            sb.AppendLine("G0X" + halfX + "Y" + (lineY + 1));
+            sb.AppendLine("M4 S" + outlinePower);
+            sb.AppendLine("G1 Y" + lineY);
+            sb.AppendLine("M5");
+
+            sb.AppendLine("G0 X" + threeQuarterX + "Y" + (lineY + 1));
+            sb.AppendLine("M4 S" + outlinePower);
+            sb.AppendLine("G1 Y" + lineY);
+            sb.AppendLine("M5");
+
+            DigitalFont font = new DigitalFont();
+
+            string drawingSpeed = "M4 S128";
+            float drawingFeed = 100;
+
+            sb.AppendLine(font.DrawStringLaser(1, 0, -2.5f, minPower.ToString(), drawingSpeed, "M5", drawingFeed).ToString());
+
+            int quarterPower = ((maxPower - minPower) / 4) + minPower;
+            sb.AppendLine(font.DrawStringLaser(1, maxX, quaterX, quarterPower.ToString(), drawingSpeed, "M5", drawingFeed).ToString());
+
+            int halfPower = ((maxPower - minPower) / 2) + minPower;
+            sb.AppendLine(font.DrawStringLaser(1, maxX, halfX, halfPower.ToString(), drawingSpeed, "M5", drawingFeed).ToString());
+
+            int threeQuarterPower = ((maxPower - minPower) / 2) + quarterPower;
+            sb.AppendLine(font.DrawStringLaser(1, maxX, threeQuarterX, threeQuarterPower.ToString(), drawingSpeed, "M5", drawingFeed).ToString());
+
+            // full power
+            sb.AppendLine(font.DrawStringLaser(1, maxX, -2.5f, maxPower.ToString(), drawingSpeed, "M5", drawingFeed).ToString());
+
+
+            sb.AppendLine(font.DrawStringLaser(1, 0, -4, DateTime.Now.ToShortDateString(), drawingSpeed, "M5", drawingFeed).ToString());
 
             File.WriteAllText("laser_test.nc", sb.ToString());
 
