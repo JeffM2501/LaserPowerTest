@@ -90,6 +90,7 @@ namespace LaserPowerTest
             for (int feed = startFeed; feed <= endFeed; feed += feedIncrement)
             {
                 Console.WriteLine("Feed " + feed);
+                sb.AppendLine("G0X0Y" + lineY);
                 sb.AppendLine("G1X0Y" + lineY + " F" + feed);
 
                 feedLabels.Add(lineY, feed);
@@ -113,11 +114,12 @@ namespace LaserPowerTest
 
             lineY -= 1;
 
-            int outlinePower = (minPower + ((maxPower - minPower) / 2));
+            int outlinePower = 128;
+            float drawingFeed = 200;
             // outer border
             sb.AppendLine("G0X-1Y-1");
             sb.AppendLine("M4 S" + outlinePower);
-            sb.AppendLine("G1 X" + (maxX + 1) + "F100");
+            sb.AppendLine("G1 X" + (maxX + 1) + "F" + drawingFeed.ToString());
             sb.AppendLine("G1 Y" + (lineY + 1));
             sb.AppendLine("G1 X-1");
             sb.AppendLine("G1 Y-1");
@@ -126,7 +128,6 @@ namespace LaserPowerTest
             int quaterX = maxX / 4;
             int halfX = maxX / 2;
             int threeQuarterX = halfX + quaterX;
-
 
             // lower lines
             sb.AppendLine("G0 X" + quaterX + "Y-1");
@@ -162,33 +163,35 @@ namespace LaserPowerTest
 
             DigitalFont font = new DigitalFont();
 
-            string drawingSpeed = "M4 S128";
-            float drawingFeed = 100;
-
-            sb.AppendLine(font.DrawStringLaser(1, 0, -2.5f, "S"+minPower.ToString(), drawingSpeed, "M5", drawingFeed).ToString());
-
-            int quarterPower = ((maxPower - minPower) / 4) + minPower;
-            sb.AppendLine(font.DrawStringLaser(1, quaterX, -2.5f, "S" + quarterPower.ToString(), drawingSpeed, "M5", drawingFeed).ToString());
-
-            int halfPower = ((maxPower - minPower) / 2) + minPower;
-            sb.AppendLine(font.DrawStringLaser(1, halfX, -2.5f, "S" + halfPower.ToString(), drawingSpeed, "M5", drawingFeed).ToString());
-
-            int threeQuarterPower = ((maxPower - minPower) / 2) + quarterPower;
-            sb.AppendLine(font.DrawStringLaser(1, threeQuarterX, -2.5f, "S" + threeQuarterPower.ToString(), drawingSpeed, "M5", drawingFeed).ToString());
-
-            // full power
-            sb.AppendLine(font.DrawStringLaser(1, maxX, -2.5f, "S" + maxPower.ToString(), drawingSpeed, "M5", drawingFeed).ToString());
+            string drawingSpeed = "M4 S" + outlinePower.ToString();
+            string offCode = "M5";
+           
+            float size = 2;
+            float speedY = -4;
 
             // feed labels
             foreach (var feed in feedLabels)
             {
-                sb.AppendLine(font.DrawStringLaser(1, maxX + 2, feed.Key, "F" + feed.Value.ToString(), drawingSpeed, "M5", drawingFeed).ToString());
+                sb.AppendLine(font.DrawStringLaser(size, maxX + 2, feed.Key, "F" + feed.Value.ToString(), drawingSpeed, offCode, drawingFeed).ToString());
             }
 
+            sb.AppendLine(font.DrawStringLaser(size, 0, speedY, "S"+minPower.ToString(), drawingSpeed, offCode, drawingFeed).ToString());
 
-            sb.AppendLine(font.DrawStringLaser(1, 0, -4, DateTime.Now.ToString(), drawingSpeed, "M5", drawingFeed).ToString());
+            int quarterPower = ((maxPower - minPower) / 4) + minPower;
+            sb.AppendLine(font.DrawStringLaser(size, quaterX, speedY, "S" + quarterPower.ToString(), drawingSpeed, offCode, drawingFeed).ToString());
 
-            File.WriteAllText("laser_test.nc", sb.ToString());
+            int halfPower = ((maxPower - minPower) / 2) + minPower;
+            sb.AppendLine(font.DrawStringLaser(size, halfX, speedY, "S" + halfPower.ToString(), drawingSpeed, offCode, drawingFeed).ToString());
+
+            int threeQuarterPower = ((maxPower - minPower) / 2) + quarterPower;
+            sb.AppendLine(font.DrawStringLaser(size, threeQuarterX, speedY, "S" + threeQuarterPower.ToString(), drawingSpeed, offCode, drawingFeed).ToString());
+
+            // full power
+            sb.AppendLine(font.DrawStringLaser(size, maxX, speedY, "S" + maxPower.ToString(), drawingSpeed, offCode, drawingFeed).ToString());
+
+            sb.AppendLine(font.DrawStringLaser(size, 0, speedY - (size + 0.5f), DateTime.Now.ToString(), drawingSpeed, offCode, drawingFeed).ToString());
+
+            File.WriteAllText("laser_test_F" + startFeed.ToString() + "-F" + endFeed.ToString() + ".nc", sb.ToString());
 
             Console.WriteLine("File complete laser_test.nc");
 

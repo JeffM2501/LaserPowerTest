@@ -32,6 +32,8 @@ namespace LaserPowerTest
 {
     public class OutlineFont
     {
+        public static bool ReturnToCycleStart = false;
+
         public class Glyph
         {
             public char Letter = char.MinValue;
@@ -76,6 +78,7 @@ namespace LaserPowerTest
 
             bool feedStatus = false;
 
+            gcode.AppendLine("G0 X" + x.ToString(floatFormat) + "Y" + y.ToString(floatFormat));
             gcode.AppendLine("G1 X" + x.ToString(floatFormat) + "Y" + y.ToString(floatFormat) + " F" + feedrate.ToString());
 
             foreach (char c in text)
@@ -100,8 +103,8 @@ namespace LaserPowerTest
                     onSatus = move.On;
                     bool feed = move.On;
 
-                    float epX = glyphStartX + move.EP[0];
-                    float epY = glyphStartY + move.EP[1];
+                    float epX = glyphStartX + (move.EP[0] * scale);
+                    float epY = glyphStartY + (move.EP[1] * scale);
 
                     if (x != epX || y != epY)
                     {
@@ -131,7 +134,9 @@ namespace LaserPowerTest
                 }
             }
             gcode.Append(offCode);
-            gcode.Append("G0 X" + startPointX.ToString(floatFormat) + "Y" + startPointY.ToString(floatFormat));
+
+            if (ReturnToCycleStart)
+                gcode.Append("G0 X" + startPointX.ToString(floatFormat) + "Y" + startPointY.ToString(floatFormat));
 
             return gcode;
         }
@@ -320,7 +325,8 @@ namespace LaserPowerTest
         {
             Glyph glyph = new Glyph();
 
-            glyph.Add(0, Unit, false);
+            glyph.Add(Unit, 0, false);
+            glyph.Add(0, Unit, true);
             glyph.Add(0, Height - Unit, true);
             glyph.Add(Unit, Height, true);
             glyph.Add(Width - Unit, 1, true);
@@ -338,8 +344,8 @@ namespace LaserPowerTest
         {
             Glyph glyph = new Glyph();
 
-            glyph.Add(Width, 0, false);
-            glyph.Add(Width, Height , true);
+            glyph.Add(HalfWidth, 0, false);
+            glyph.Add(HalfWidth, Height , true);
 
             glyph.Add(Width + Unit, 0, false);
             return glyph;
