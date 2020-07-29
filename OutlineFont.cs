@@ -162,8 +162,75 @@ namespace LaserPowerTest
             Glyphs.Add('/', Slash());
             Glyphs.Add('\\', Backslash());
 
+            Glyphs.Add('F', F());
+            Glyphs.Add('P', P());
+            Glyphs.Add('A', A());
+            Glyphs.Add('M', M());
+
             Glyphs.Add(' ', Space());
             Glyphs.Add('\t', Tab());
+        }
+
+        protected Glyph A()
+        {
+            Glyph glyph = new Glyph();
+
+            glyph.Add(0, 0, false);
+            glyph.Add(0, Height - Unit, true);
+            glyph.Add( Unit, Height, true);
+            glyph.Add(Width-Unit, Height, true);
+            glyph.Add(Width, Height - Unit, true);
+            glyph.Add(Width, 0, true);
+            glyph.Add(Width, HalfHeight, false);
+            glyph.Add(0, HalfHeight, true);
+
+            glyph.Add(Width + Unit, 0, false);
+            return glyph;
+        }
+
+        protected Glyph M()
+        {
+            Glyph glyph = new Glyph();
+
+            glyph.Add(0, 0, false);
+            glyph.Add(0, Height, true);
+            glyph.Add(Width, Height, true);
+            glyph.Add(Width, 0, true);
+            glyph.Add(HalfWidth, Height, false);
+            glyph.Add(HalfWidth, HalfHeight, true);
+
+            glyph.Add(Width + Unit, 0, false);
+            return glyph;
+        }
+
+        protected Glyph P()
+        {
+            Glyph glyph = new Glyph();
+
+            glyph.Add(0, 0, false);
+            glyph.Add(0, Height, true);
+            glyph.Add(Width-Unit, Height, true);
+            glyph.Add(Width, Height - Unit, true);
+            glyph.Add(Width, HalfHeight + Unit, true);
+            glyph.Add(Width - Unit, HalfHeight, true);
+            glyph.Add(0, HalfHeight, true);
+
+            glyph.Add(Width + Unit, 0, false);
+            return glyph;
+        }
+
+        protected Glyph F()
+        {
+            Glyph glyph = new Glyph();
+
+            glyph.Add(0, 0, false);
+            glyph.Add(0, Height, true);
+            glyph.Add(Width, Height, true);
+            glyph.Add(Width, HalfHeight, false);
+            glyph.Add(0, HalfHeight, true);
+
+            glyph.Add(Width + Unit, 0, false);
+            return glyph;
         }
 
         protected Glyph Slash()

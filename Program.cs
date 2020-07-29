@@ -57,12 +57,12 @@ namespace LaserPowerTest
 
 
             int startFeed = GetValue("Starting Feedrate",50);
-            int endFeed = GetValue("Ending Feedrate", 450);
-            int feedIncrement = GetValue("Feedrate Increment",100);
+            int endFeed = GetValue("Ending Feedrate", 250);
+            int feedIncrement = GetValue("Feedrate Increment",50);
 
-            int minPower = GetValue("Starting Laser Power", 32);
+            int minPower = GetValue("Starting Laser Power", 64);
             int maxPower = GetValue("Ending Laser Power", 255);
-            int powerStep = GetValue("Laser Power Increment", 4);
+            int powerStep = GetValue("Laser Power Increment", 3);
 
 
             int strokeLenght = GetValue("Stroke Length", 5);
@@ -82,15 +82,19 @@ namespace LaserPowerTest
 
             int lineY = 0;
 
-            int maxX = (maxPower - minPower) / powerStep;
+            int maxX = ((maxPower - minPower) / powerStep) + 1;
             maxX *= xOffset;
+
+            SortedDictionary<int, int> feedLabels = new SortedDictionary<int, int>();
 
             for (int feed = startFeed; feed <= endFeed; feed += feedIncrement)
             {
                 Console.WriteLine("Feed " + feed);
                 sb.AppendLine("G1X0Y" + lineY + " F" + feed);
 
-                for(int currX = 0; currX <= ((maxPower-minPower)/powerStep) + 1; currX++)
+                feedLabels.Add(lineY, feed);
+
+                for (int currX = 0; currX <= ((maxPower-minPower)/powerStep) + 1; currX++)
                 {
                     int spX = currX * xOffset;
 
@@ -162,19 +166,25 @@ namespace LaserPowerTest
             sb.AppendLine(font.DrawStringLaser(1, 0, -2.5f, minPower.ToString(), drawingSpeed, "M5", drawingFeed).ToString());
 
             int quarterPower = ((maxPower - minPower) / 4) + minPower;
-            sb.AppendLine(font.DrawStringLaser(1, maxX, quaterX, quarterPower.ToString(), drawingSpeed, "M5", drawingFeed).ToString());
+            sb.AppendLine(font.DrawStringLaser(1, quaterX, -2.5f, quarterPower.ToString(), drawingSpeed, "M5", drawingFeed).ToString());
 
             int halfPower = ((maxPower - minPower) / 2) + minPower;
-            sb.AppendLine(font.DrawStringLaser(1, maxX, halfX, halfPower.ToString(), drawingSpeed, "M5", drawingFeed).ToString());
+            sb.AppendLine(font.DrawStringLaser(1, halfX, -2.5f, halfPower.ToString(), drawingSpeed, "M5", drawingFeed).ToString());
 
             int threeQuarterPower = ((maxPower - minPower) / 2) + quarterPower;
-            sb.AppendLine(font.DrawStringLaser(1, maxX, threeQuarterX, threeQuarterPower.ToString(), drawingSpeed, "M5", drawingFeed).ToString());
+            sb.AppendLine(font.DrawStringLaser(1, threeQuarterX, -2.5f, threeQuarterPower.ToString(), drawingSpeed, "M5", drawingFeed).ToString());
 
             // full power
             sb.AppendLine(font.DrawStringLaser(1, maxX, -2.5f, maxPower.ToString(), drawingSpeed, "M5", drawingFeed).ToString());
 
+            // feed labels
+            foreach (var feed in feedLabels)
+            {
+                sb.AppendLine(font.DrawStringLaser(1, maxX + 2, feed.Key, "F" + feed.Value.ToString(), drawingSpeed, "M5", drawingFeed).ToString());
+            }
 
-            sb.AppendLine(font.DrawStringLaser(1, 0, -4, DateTime.Now.ToShortDateString(), drawingSpeed, "M5", drawingFeed).ToString());
+
+            sb.AppendLine(font.DrawStringLaser(1, 0, -4, DateTime.Now.ToString(), drawingSpeed, "M5", drawingFeed).ToString());
 
             File.WriteAllText("laser_test.nc", sb.ToString());
 
