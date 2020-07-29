@@ -111,6 +111,8 @@ namespace LaserPowerTest
 
             }
 
+            lineY -= 1;
+
             int outlinePower = (minPower + ((maxPower - minPower) / 2));
             // outer border
             sb.AppendLine("G0X-1Y-1");
@@ -163,19 +165,19 @@ namespace LaserPowerTest
             string drawingSpeed = "M4 S128";
             float drawingFeed = 100;
 
-            sb.AppendLine(font.DrawStringLaser(1, 0, -2.5f, minPower.ToString(), drawingSpeed, "M5", drawingFeed).ToString());
+            sb.AppendLine(font.DrawStringLaser(1, 0, -2.5f, "S"+minPower.ToString(), drawingSpeed, "M5", drawingFeed).ToString());
 
             int quarterPower = ((maxPower - minPower) / 4) + minPower;
-            sb.AppendLine(font.DrawStringLaser(1, quaterX, -2.5f, quarterPower.ToString(), drawingSpeed, "M5", drawingFeed).ToString());
+            sb.AppendLine(font.DrawStringLaser(1, quaterX, -2.5f, "S" + quarterPower.ToString(), drawingSpeed, "M5", drawingFeed).ToString());
 
             int halfPower = ((maxPower - minPower) / 2) + minPower;
-            sb.AppendLine(font.DrawStringLaser(1, halfX, -2.5f, halfPower.ToString(), drawingSpeed, "M5", drawingFeed).ToString());
+            sb.AppendLine(font.DrawStringLaser(1, halfX, -2.5f, "S" + halfPower.ToString(), drawingSpeed, "M5", drawingFeed).ToString());
 
             int threeQuarterPower = ((maxPower - minPower) / 2) + quarterPower;
-            sb.AppendLine(font.DrawStringLaser(1, threeQuarterX, -2.5f, threeQuarterPower.ToString(), drawingSpeed, "M5", drawingFeed).ToString());
+            sb.AppendLine(font.DrawStringLaser(1, threeQuarterX, -2.5f, "S" + threeQuarterPower.ToString(), drawingSpeed, "M5", drawingFeed).ToString());
 
             // full power
-            sb.AppendLine(font.DrawStringLaser(1, maxX, -2.5f, maxPower.ToString(), drawingSpeed, "M5", drawingFeed).ToString());
+            sb.AppendLine(font.DrawStringLaser(1, maxX, -2.5f, "S" + maxPower.ToString(), drawingSpeed, "M5", drawingFeed).ToString());
 
             // feed labels
             foreach (var feed in feedLabels)

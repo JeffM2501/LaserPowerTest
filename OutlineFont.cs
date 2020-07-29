@@ -166,6 +166,7 @@ namespace LaserPowerTest
             Glyphs.Add('P', P());
             Glyphs.Add('A', A());
             Glyphs.Add('M', M());
+            Glyphs.Add('S', S());
 
             Glyphs.Add(' ', Space());
             Glyphs.Add('\t', Tab());
@@ -214,6 +215,27 @@ namespace LaserPowerTest
             glyph.Add(Width, HalfHeight + Unit, true);
             glyph.Add(Width - Unit, HalfHeight, true);
             glyph.Add(0, HalfHeight, true);
+
+            glyph.Add(Width + Unit, 0, false);
+            return glyph;
+        }
+
+        protected Glyph S()
+        {
+            Glyph glyph = new Glyph();
+
+            glyph.Add(0, Unit, false);
+            glyph.Add(Unit, 0, true);
+            glyph.Add(Width - Unit, 0, true);
+            glyph.Add(Width, Unit, true);
+            glyph.Add(Width, HalfHeight - Unit, true);
+            glyph.Add(Width - Unit, HalfHeight, true);
+            glyph.Add(Unit, HalfHeight, true);
+            glyph.Add(0, HalfHeight + Unit, true);
+            glyph.Add(0, Height - Unit, true);
+            glyph.Add(Unit, Height, true);
+            glyph.Add(Width - Unit, Height, true);
+            glyph.Add(Width, Height - Unit, true);
 
             glyph.Add(Width + Unit, 0, false);
             return glyph;
